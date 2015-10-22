@@ -53,7 +53,7 @@ LiveWrapper::LiveWrapper(){
 	videoSink = H264VideoRTPSink::createNew(*env, &rtpGroupsock, 96);
 
 	// Create (and start) a 'RTCP instance' for this RTP sink:
-	const unsigned estimatedSessionBandwidth = 500; // in kbps; for RTCP b/w share
+	const unsigned estimatedSessionBandwidth = 1024; // in kbps; for RTCP b/w share
 	const unsigned maxCNAMElen = 100;
 	unsigned char CNAME[maxCNAMElen+1];
 	gethostname((char*)CNAME, maxCNAMElen);
@@ -72,7 +72,7 @@ LiveWrapper::LiveWrapper(){
 	}
 
 	ServerMediaSession* sms
-	= ServerMediaSession::createNew(*env, "thermCam", inputFileName,
+	= ServerMediaSession::createNew(*env, "thermCam", "UPP Buffer",
 		   "Session streamed by \"camstreamer\"", True /*SSM*/);
 
 	sms->addSubsession(PassiveServerMediaSubsession::createNew(*videoSink, rtcp));
@@ -85,7 +85,11 @@ LiveWrapper::LiveWrapper(){
 	// Start the streaming:
 	*env << "Beginning streaming...\n";
 
-	return;
+    play();
+
+	env->taskScheduler().doEventLoop(); // does not return
+
+
 }
 
 LiveWrapper::~LiveWrapper() {
@@ -95,10 +99,21 @@ LiveWrapper::~LiveWrapper() {
      */
 }
 
+void LiveWrapper::play(void) {
+
+  // Open the input file as with Device as the source:
+
+}
+
+void LiveWrapper::afterPlaying(void) {
+	play();
+}
+
+
 void *Live_init(void) {
     LiveWrapper *live = LiveWrapper::createSingleton();
     if(live != NULL) {
-	//live->play();
+	live->play();
 	return live;
     }
     else {

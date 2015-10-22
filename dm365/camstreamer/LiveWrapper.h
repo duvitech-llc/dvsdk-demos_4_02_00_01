@@ -20,6 +20,8 @@ public:
 
     virtual ~LiveWrapper();
     static LiveWrapper *getInstance(void);
+    void play();
+    void afterPlaying();
 protected:
     LiveWrapper();
 

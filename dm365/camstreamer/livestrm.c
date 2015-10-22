@@ -50,6 +50,7 @@
 
 #include "livestrm.h"
 #include "../demo.h"
+#include "live_api.h"
 
 /* Number of buffers in writer pipe */
 #define NUM_WRITER_BUFS         10
@@ -67,6 +68,9 @@ Void *livestrmThrFxn(Void *arg)
     Buffer_Handle       hOutBuf;
     Int                 fifoRet;
     Int                 bufIdx;
+    Void               *liveObj;
+
+    liveObj = Live_init();
 
     /* Open the output video file */
     outFile = fopen(envp->videoFile, "w");

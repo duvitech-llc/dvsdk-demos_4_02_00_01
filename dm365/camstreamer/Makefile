@@ -36,6 +36,8 @@
 ROOTDIR = ../../..
 TARGET = $(notdir $(CURDIR))
 
+LIVE = $(ROOTDIR)/live_2015_10_12
+
 include $(ROOTDIR)/Rules.make
 
 # Comment this out if you want to see full compiler and linker output.
@@ -69,16 +71,41 @@ CONFIGURO = $(XDC_INSTALL_DIR)/xs xdc.tools.configuro
 CONFIG_BLD = ../../config.bld
 
 C_FLAGS += -Wall -g
+CXX_FLAGS += -Wall -g
 
+# using GNU extension versionsort()
+C_FLAGS += -D_GNU_SOURCE
 LD_FLAGS += -L$(LINUXLIBS_INSTALL_DIR)/lib -lpthread -lasound
 
-COMPILE.c = $(VERBOSE) $(CSTOOL_PREFIX)gcc $(CPP_FLAGS) $(C_FLAGS) $(CPP_FLAGS) -c
+# Live555 stuff
+C_FLAGS += -I${LIVE}/BasicUsageEnvironment/include \
+	   -I${LIVE}/UsageEnvironment/include \
+	   -I${LIVE}/groupsock/include \
+	   -I${LIVE}/liveMedia/include
+
+CXX_FLAGS += -I${LIVE}/BasicUsageEnvironment/include \
+	   -I${LIVE}/UsageEnvironment/include \
+	   -I${LIVE}/groupsock/include \
+	   -I${LIVE}/liveMedia/include
+
+LD_FLAGS += -L/home/gvigelet/staging/usr/local/lib \
+	    -lBasicUsageEnvironment \
+	    -lUsageEnvironment \
+	    -lgroupsock \
+	    -lliveMedia \
+	    -lstdc++
+
+
+COMPILE.c   = $(VERBOSE) $(CSTOOL_PREFIX)gcc $(CPP_FLAGS) $(C_FLAGS) $(CPP_FLAGS) -c
+COMPILE.cxx = $(VERBOSE) $(CSTOOL_PREFIX)g++ $(CPP_FLAGS) $(CXX_FLAGS) -c
 LINK.c = $(VERBOSE) $(CSTOOL_PREFIX)gcc $(LD_FLAGS)
 
 SOURCES = $(wildcard *.c) $(wildcard ../*.c)
+CXX_SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h) $(wildcard ../*.h)
 
 OBJFILES = $(SOURCES:%.c=%.o)
+CXX_OBJFILES = $(CXX_SOURCES:%.cpp=%.o)
 
 .PHONY: clean install 
 
@@ -97,7 +124,7 @@ install_$(TARGET):
 	@echo
 	@echo Installed $(TARGET) binaries to $(EXEC_DIR)..
 
-$(TARGET):	$(OBJFILES) $(XDC_LFILE)
+$(TARGET):	$(OBJFILES) $(CXX_OBJFILES) $(XDC_LFILE)
 	@echo
 	@echo Linking $@ from $^..
 	$(LINK.c) -o $@ $^ 
@@ -105,6 +132,10 @@ $(TARGET):	$(OBJFILES) $(XDC_LFILE)
 $(OBJFILES):	%.o: %.c $(HEADERS) $(XDC_CFLAGS)
 	@echo Compiling $@ from $<..
 	$(COMPILE.c) $(shell cat $(XDC_CFLAGS)) -o $@ $<
+
+$(CXX_OBJFILES):	%.o: %.cpp $(HEADERS)
+	@echo Compiling $@ from $<..
+	$(COMPILE.cxx) -o $@ $<
 
 $(XDC_LFILE) $(XDC_CFLAGS):	$(XDC_CFGFILE)
 	@echo

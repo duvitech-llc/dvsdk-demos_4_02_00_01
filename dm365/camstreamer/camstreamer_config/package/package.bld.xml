@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  This file conforms to the DTD xdc/bld/build.dtd -->
-<package name="encode_config" version="" producerId="undefined">
+<package name="camstreamer_config" version="" producerId="undefined">
     <units>
     </units>
     <sources>
-        <srcFile name="package/cfg/encode_xv5T.c"/>
+        <srcFile name="package/cfg/camstreamer_xv5T.c"/>
     </sources>
     <configurations>
-        <srcFile name="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encode/encode.cfg"/>
+        <srcFile name="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer.cfg"/>
     </configurations>
     <makefiles>
         <srcFile name="package.mak" src="package.bld"/>
         <srcFile name="package/package.xdc.dep" src="package.xdc"/>
-        <srcFile name="package/cfg/encode_xv5T.mak" src="package.bld"/>
-        <srcFile name="package/cfg/encode_xv5T.ov5T.dep" src="package/cfg/encode_xv5T.c"/>
-        <srcFile name="package/cfg/encode_xv5T.dep" src="package/cfg/encode_xv5T.cfg"/>
-        <srcFile name="package/rel/encode_config.tar.dep" src="package/rel/encode_config.xdc.inc"/>
+        <srcFile name="package/cfg/camstreamer_xv5T.mak" src="package.bld"/>
+        <srcFile name="package/cfg/camstreamer_xv5T.ov5T.dep" src="package/cfg/camstreamer_xv5T.c"/>
+        <srcFile name="package/cfg/camstreamer_xv5T.dep" src="package/cfg/camstreamer_xv5T.cfg"/>
+        <srcFile name="package/rel/camstreamer_config.tar.dep" src="package/rel/camstreamer_config.xdc.inc"/>
     </makefiles>
     <targets>
         <target name="gnu.targets.arm.GCArmv5T"
@@ -34,29 +34,29 @@
     <libraries>
     </libraries>
     <executables>
-    <executable name="encode"
-        pname="encode.xv5T"
+    <executable name="camstreamer"
+        pname="camstreamer.xv5T"
         target="gnu.targets.arm.GCArmv5T"
         platform="ti.platforms.evmDM365"
         profile="release"
-        xCfgScript="package/cfg/encode_xv5T.cfg"
-        xCfgPrefix="package/cfg/encode_xv5T"
-        cfgScript="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encode/encode.cfg"
+        xCfgScript="package/cfg/camstreamer_xv5T.cfg"
+        xCfgPrefix="package/cfg/camstreamer_xv5T"
+        cfgScript="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer.cfg"
         cfgArgs="null"
         />
     </executables>
     <tests>
-    <test exeName="encode.xv5T"
+    <test exeName="camstreamer.xv5T"
         args=""
-        groupName="encode.xv5T"
+        groupName="camstreamer.xv5T"
         refOutput="undefined"
         refExitCode="0"
         execArgs=""
         />
     </tests>
     <releases relDir="package/rel/">
-    <release name="encode_config"
-        pname="encode_config.tar"
+    <release name="camstreamer_config"
+        pname="camstreamer_config.tar"
         label="default"
     >
         <file name="package/build.cfg"/>

@@ -2,7 +2,7 @@
  * package
  */
 INPUT(
-    /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encode/encode_config/package/cfg/encode_xv5T.ov5T
+    /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer_config/package/cfg/camstreamer_xv5T.ov5T
     /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/ittiam/codecs/aaclc_enc/ce/lib/resource.a470MV
     /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dmai_2_20_00_15/packages/ti/sdo/dmai/lib/dmai_linux_dm365.a470MV
     /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/ti/sdo/ce/image1/lib/release/imgdec1.av5T

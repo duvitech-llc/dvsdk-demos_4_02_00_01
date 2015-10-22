@@ -5,9 +5,9 @@
  * @(#) xdc-u17
  */
 
-#ifndef encode_config__
-#define encode_config__
+#ifndef camstreamer_config__
+#define camstreamer_config__
 
 
 
-#endif /* encode_config__ */ 
+#endif /* camstreamer_config__ */ 

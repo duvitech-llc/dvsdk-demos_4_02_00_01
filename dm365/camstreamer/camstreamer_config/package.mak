@@ -5,7 +5,7 @@
 #
 
 unexport MAKEFILE_LIST
-override PKGDIR = encode_config
+override PKGDIR = camstreamer_config
 XDCINCS = -I. -I$(strip $(subst ;, -I,$(subst $(space),\$(space),$(XPKGPATH))))
 XDCCFGDIR = package/cfg/
 
@@ -24,8 +24,10 @@ package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/pa
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/config.bld
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/tools/configuro/template/package.xs.xdt:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/tools/configuro/template/package.xs.xdt
+package.mak: config.bld
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/services/io/package.xs:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/services/io/package.xs
+package.mak: package.bld
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/bld/PackageContents.xs:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/bld/PackageContents.xs
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/xmlgen.xs:
@@ -66,7 +68,6 @@ package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/pa
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/services/global/Clock.xs
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/ti/targets/MSP430_large_code.xs:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/ti/targets/MSP430_large_code.xs
-package.mak: package.bld
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/bld/Utils.xs:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/bld/Utils.xs
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/bld/Repository.xs:
@@ -77,7 +78,6 @@ package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/pa
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/gnu/targets/Linux86.xs
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/gnu/targets/Mingw.xs:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/gnu/targets/Mingw.xs
-package.mak: config.bld
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/template.xs:
 package.mak: /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/xdc/template.xs
 /home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/gnu/targets/arm/GCArmv7A.xs:
@@ -125,86 +125,86 @@ PKGCFGS := $(wildcard package.xs) package/build.cfg
 .interfaces: package/package.xdc.inc package/package.defs.h package.xdc $(PKGCFGS)
 
 -include package/package.xdc.dep
-package/%.xdc.inc package/%_encode_config.c package/%.defs.h: %.xdc $(PKGCFGS)
-	@$(MSG) generating interfaces for package encode_config" (because $@ is older than $(firstword $?))" ...
+package/%.xdc.inc package/%_camstreamer_config.c package/%.defs.h: %.xdc $(PKGCFGS)
+	@$(MSG) generating interfaces for package camstreamer_config" (because $@ is older than $(firstword $?))" ...
 	$(XSRUN) -f xdc/services/intern/cmd/build.xs $(MK_IDLOPTS) -m package/package.xdc.dep -i package/package.xdc.inc package.xdc
 
-.executables,v5T .executables: encode.xv5T
+.executables,v5T .executables: camstreamer.xv5T
 
--include package/cfg/encode_xv5T.mak
+-include package/cfg/camstreamer_xv5T.mak
 ifneq (clean,$(MAKECMDGOALS))
--include package/cfg/encode_xv5T.dep
+-include package/cfg/camstreamer_xv5T.dep
 endif
-package/cfg/encode_xv5T.ov5T : | package/cfg/encode_xv5T.xdl
-encode.xv5T:
+package/cfg/camstreamer_xv5T.ov5T : | package/cfg/camstreamer_xv5T.xdl
+camstreamer.xv5T:
 	$(RM) $@
 	@$(MSG) lnkv5T $@ ...
-	$(gnu.targets.arm.GCArmv5T.rootDir)/bin/arm-none-linux-gnueabi-gcc    -o $@ package/cfg/encode_xv5T.ov5T  package/cfg/encode_xv5T.xdl  -lstdc++ -L$(gnu.targets.arm.GCArmv5T.rootDir)/arm-none-linux-gnueabi/lib
+	$(gnu.targets.arm.GCArmv5T.rootDir)/bin/arm-none-linux-gnueabi-gcc    -o $@ package/cfg/camstreamer_xv5T.ov5T  package/cfg/camstreamer_xv5T.xdl  -lstdc++ -L$(gnu.targets.arm.GCArmv5T.rootDir)/arm-none-linux-gnueabi/lib
 	
-encode.xv5T:LD_LIBRARY_PATH=
+camstreamer.xv5T:LD_LIBRARY_PATH=
 
 
 ifeq (,$(wildcard .libraries,v5T))
-encode.xv5T package/cfg/encode_xv5T.c: .libraries,v5T
+camstreamer.xv5T package/cfg/camstreamer_xv5T.c: .libraries,v5T
 endif
 
-package/cfg/encode_xv5T.c package/cfg/encode_xv5T.h package/cfg/encode_xv5T.xdl: override _PROG_NAME := encode.xv5T
-package/cfg/encode_xv5T.c: package/cfg/encode_xv5T.cfg
-encode.test test,v5T test: encode.xv5T.test
+package/cfg/camstreamer_xv5T.c package/cfg/camstreamer_xv5T.h package/cfg/camstreamer_xv5T.xdl: override _PROG_NAME := camstreamer.xv5T
+package/cfg/camstreamer_xv5T.c: package/cfg/camstreamer_xv5T.cfg
+camstreamer.test test,v5T test: camstreamer.xv5T.test
 
-encode.xv5T.test:: encode.xv5T
+camstreamer.xv5T.test:: camstreamer.xv5T
 ifeq (,$(_TESTLEVEL))
-	@$(MAKE) -R -r --no-print-directory -f $(XDCROOT)/packages/xdc/bld/xdc.mak _TESTLEVEL=1 encode.xv5T.test
+	@$(MAKE) -R -r --no-print-directory -f $(XDCROOT)/packages/xdc/bld/xdc.mak _TESTLEVEL=1 camstreamer.xv5T.test
 else
 	@$(MSG) running $<  ...
-	$(call EXEC.encode.xv5T, ) 
+	$(call EXEC.camstreamer.xv5T, ) 
 endif
 
 
 clean:: clean,v5T
-	-$(RM) package/cfg/encode_xv5T.cfg
-	-$(RM) package/cfg/encode_xv5T.dep
-	-$(RM) package/cfg/encode_xv5T.c
-	-$(RM) package/cfg/encode_xv5T.xdc.inc
+	-$(RM) package/cfg/camstreamer_xv5T.cfg
+	-$(RM) package/cfg/camstreamer_xv5T.dep
+	-$(RM) package/cfg/camstreamer_xv5T.c
+	-$(RM) package/cfg/camstreamer_xv5T.xdc.inc
 
 clean,v5T::
-	-$(RM) encode.xv5T
-	-$(RM) .tmp,encode.xv5T,*
+	-$(RM) camstreamer.xv5T
+	-$(RM) .tmp,camstreamer.xv5T,*
 
 %,copy:
 	@$(if $<,,$(MSG) don\'t know how to build $*; exit 1)
 	@$(MSG) cp $< $@
 	$(RM) $@
 	$(CP) $< $@
-encode_xv5T.sv5T,copy : package/cfg/encode_xv5T.sv5T
-encode_xv5T.ov5T,copy : package/cfg/encode_xv5T.ov5T
+camstreamer_xv5T.sv5T,copy : package/cfg/camstreamer_xv5T.sv5T
+camstreamer_xv5T.ov5T,copy : package/cfg/camstreamer_xv5T.ov5T
 
 $(XDCCFGDIR)%.c $(XDCCFGDIR)%.h $(XDCCFGDIR)%.xdl: $(XDCCFGDIR)%.cfg .interfaces $(XDCROOT)/packages/xdc/cfg/Main.xs
 	@$(MSG) "configuring $(_PROG_NAME) from $< ..."
 	$(CONFIG) $(_PROG_XSOPTS) xdc.cfg $(_PROG_NAME) $(XDCCFGDIR)$*.cfg $(XDCCFGDIR)$*
 
-.PHONY: release,encode_config
-encode_config.tar: package/build.cfg
-encode_config.tar: package/package.ext.xml
-encode_config.tar: package/package.xdc.inc
-encode_config.tar: package/package.bld.xml
-encode_config.tar: package/package.rel.dot
+.PHONY: release,camstreamer_config
+camstreamer_config.tar: package/build.cfg
+camstreamer_config.tar: package/package.ext.xml
+camstreamer_config.tar: package/package.xdc.inc
+camstreamer_config.tar: package/package.bld.xml
+camstreamer_config.tar: package/package.rel.dot
 ifneq (clean,$(MAKECMDGOALS))
--include package/rel/encode_config.tar.dep
+-include package/rel/camstreamer_config.tar.dep
 endif
-package/rel/encode_config/encode_config/package/package.rel.xml:
+package/rel/camstreamer_config/camstreamer_config/package/package.rel.xml:
 
-encode_config.tar: package/rel/encode_config.xdc.inc package/rel/encode_config/encode_config/package/package.rel.xml
+camstreamer_config.tar: package/rel/camstreamer_config.xdc.inc package/rel/camstreamer_config/camstreamer_config/package/package.rel.xml
 	@$(MSG) making release file $@ "(because of $(firstword $?))" ...
 	-$(RM) $@
-	$(call MKRELTAR,package/rel/encode_config.xdc.inc,package/rel/encode_config.tar.dep)
+	$(call MKRELTAR,package/rel/camstreamer_config.xdc.inc,package/rel/camstreamer_config.tar.dep)
 
 
-release release,encode_config: all encode_config.tar
+release release,camstreamer_config: all camstreamer_config.tar
 clean:: .clean
-	-$(RM) encode_config.tar
-	-$(RM) package/rel/encode_config.xdc.inc
-	-$(RM) package/rel/encode_config.tar.dep
+	-$(RM) camstreamer_config.tar
+	-$(RM) package/rel/camstreamer_config.xdc.inc
+	-$(RM) package/rel/camstreamer_config.tar.dep
 
 clean:: .clean
 	-$(RM) .libraries .libraries,*

@@ -3,5 +3,5 @@
  *
  * @_nodoc
  */
-package encode_config {
+package camstreamer_config {
 }

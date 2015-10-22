@@ -11,9 +11,9 @@ var makeAssembly = false;
 var Executable = xdc.module('xdc.bld.Executable');
 
 var exeOpts = new Executable.Attrs({
-        cfgScript: '/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encode/encode.cfg',
+        cfgScript: '/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer.cfg',
         profile: 'release',
-        cfgHome: 'encode_config',
+        cfgHome: 'camstreamer_config',
 });
 
 /* if the build model supports encoded cfgArgs, use it */
@@ -27,7 +27,7 @@ else {
 }
 
 var exe = Pkg[makeAssembly ? 'addAssembly': 'addExecutable'](
-    'encode',
+    'camstreamer',
     targ,
     platform,
     exeOpts
@@ -48,10 +48,10 @@ else {
     var suffix  = targ.execExt || '.x' + targ.suffix;
 }
 var thisObj = {
-    cfg:        'encode.cfg',
-    outputPath: '/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encode/encode_config',
-    exeName:    'encode' + suffix,
-    exeIntName: 'encode' + suffix.replace('.', '_'),
+    cfg:        'camstreamer.cfg',
+    outputPath: '/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer_config',
+    exeName:    'camstreamer' + suffix,
+    exeIntName: 'camstreamer' + suffix.replace('.', '_'),
     targ:       targ,
     legacyTcf:  false,
     bios5Incs:  false,

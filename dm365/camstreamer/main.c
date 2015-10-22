@@ -57,7 +57,6 @@
 #include <ti/sdo/dmai/Dmai.h>
 #include <ti/sdo/dmai/Fifo.h>
 #include <ti/sdo/dmai/Pause.h>
-#include <ti/sdo/dmai/Sound.h>
 #include <ti/sdo/dmai/VideoStd.h>
 #include <ti/sdo/dmai/Capture.h>
 #include <ti/sdo/dmai/BufferGfx.h>
@@ -66,10 +65,8 @@
 #include <ti/sdo/fc/rman/rman.h>
 
 #include "video.h"
-#include "audio.h"
 #include "capture.h"
 #include "writer.h"
-#include "speech.h"
 #include "../ctrl.h"
 #include "../demo.h"
 #include "../ui.h"
@@ -80,13 +77,9 @@
 #define CAPTURETHREADCREATED    0x40
 #define WRITERTHREADCREATED     0x80
 #define VIDEOTHREADCREATED      0x100
-#define SPEECHTHREADCREATED     0x200
-#define AUDIOTHREADCREATED      0x400
 
 /* Thread priorities */
-#define SPEECH_THREAD_PRIORITY  sched_get_priority_max(SCHED_FIFO) - 2
 #define VIDEO_THREAD_PRIORITY   sched_get_priority_max(SCHED_FIFO) - 1
-#define AUDIO_THREAD_PRIORITY   sched_get_priority_max(SCHED_FIFO) - 2
 
 /* Add argument number x of string y */
 #define addArg(x, y)                     \
@@ -98,20 +91,13 @@
 typedef struct Args {
     VideoStd_Type  videoStd;
     Char          *videoStdString;
-    Sound_Input    soundInput;
     Capture_Input  videoInput;
-    Char          *speechFile;
-    Char          *audioFile;
     Char          *videoFile;
-    Codec         *speechEncoder;
     Codec         *videoEncoder;
-    Codec         *audioEncoder;
     Int32          imageWidth;
     Int32          imageHeight;
     Int            videoBitRate;
     Char          *videoBitRateString;
-    Int            soundBitRate;
-    Char          *soundBitRateString;
     Int            sampleRate;
     Char          *sampleRateString;
     Int            keyboard;
@@ -122,9 +108,9 @@ typedef struct Args {
 } Args;
 
 #define DEFAULT_ARGS \
-    { VideoStd_720P_60, "720P 60Hz", Sound_Input_MIC, Capture_Input_COUNT, \
-      NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, -1, NULL, 96000, NULL, \
-      16000, NULL, FALSE, FOREVER, FALSE, FALSE, FALSE }
+    { VideoStd_D1_NTSC, "D1 NTSC", Capture_Input_CAMERA, \
+      "test.264", NULL, 0, 0, -1, NULL, 16000, NULL, \
+	  FALSE, FOREVER, FALSE, FALSE, FALSE }
 
 /* Global variable declarations for this application */
 GlobalData gbl = GBL_DATA_INIT;
@@ -157,329 +143,9 @@ static Codec *getCodec(Char *extension, Codec *codecs)
  ******************************************************************************/
 static void usage(void)
 {
-    fprintf(stderr, "Usage: encode [options]\n\n"
-      "Options:\n"
-      "-s | --speechfile       Speech file to record to\n"
-      "-a | --audiofile        Audio file to play\n"
-      "-v | --videofile        Video file to record to\n"
-      "-y | --display_standard Video standard to use for display (see below).\n"
-      "                        Same video standard is used at input.\n"
-      "-r | --resolution       Video resolution ('width'x'height')\n"
-      "                        [video standard default]\n"
-      "-b | --videobitrate     Bit rate to encode video at [variable]\n"
-      "-p | --soundbitrate     Bit rate to encode audio at [96000]\n"
-      "-u | --samplerate       Sample rate to encode audio at [16000]\n"
-      "-w | --preview_disable  Disable preview [preview enabled]\n"
-      "-f | --write_disable    Disable recording of encoded file [enabled]\n"
-      "-I | --video_input      Video input source [video standard default]\n"
-      "-l | --linein           Use linein as sound input instead of mic \n"
-      "                        [off]\n"
-      "-k | --keyboard         Enable keyboard interface [off]\n"
-      "-t | --time             Number of seconds to run the demo [infinite]\n"
-      "-o | --osd              Show demo data on an OSD [off]\n"
-      "-h | --help             Print this message\n\n"
-      "Video standards available\n"
-      "\t1\tD1 @ 30 fps (NTSC)\n"
-      "\t2\tD1 @ 25 fps (PAL)\n"
-      "\t3\t720P @ 60 fps [Default]\n"
-      "\t5\t1080I @ 30 fps - for DM368\n"
-      "Video inputs available:\n"
-      "\t1\tComposite\n"
-      "\t2\tS-video\n"
-      "\t3\tComponent\n"
-      "\t4\tImager/Camera - for DM368\n"
-      "You must supply at least a video or a speech file or both\n"
-      "with appropriate extensions for the file formats.\n\n");
+    fprintf(stderr, "Usage: camstreamer");
 }
 
-/******************************************************************************
- * parseArgs
- ******************************************************************************/
-static Void parseArgs(Int argc, Char *argv[], Args *argsp)
-{
-    const Char shortOptions[] = "s:a:v:y:r:b:p:u:wfI:lkt:oh";
-    const struct option longOptions[] = {
-        {"speechfile",       required_argument, NULL, 's'},
-        {"audiofile",        required_argument, NULL, 'a'},
-        {"videofile",        required_argument, NULL, 'v'},
-        {"display_standard", required_argument, NULL, 'y'},
-        {"resolution",       required_argument, NULL, 'r'},
-        {"videobitrate",     required_argument, NULL, 'b'},
-        {"soundbitrate",     required_argument, NULL, 'p'},
-        {"samplerate",       required_argument, NULL, 'u'},
-        {"preview_disable",  no_argument,       NULL, 'w'},
-        {"write_disable",    no_argument,       NULL, 'f'},
-        {"video_input",      required_argument, NULL, 'I'},
-        {"linein",           no_argument,       NULL, 'l'},
-        {"keyboard",         no_argument,       NULL, 'k'},
-        {"time",             required_argument, NULL, 't'},
-        {"osd",              no_argument,       NULL, 'o'},
-        {"help",             no_argument,       NULL, 'h'},
-        {0, 0, 0, 0}
-    };
-
-    Int     index;
-    Int     c;
-    Char    *extension;
-
-    for (;;) {
-        c = getopt_long(argc, argv, shortOptions, longOptions, &index);
-
-        if (c == -1) {
-            break;
-        }
-
-        switch (c) {
-            case 0:
-                break;
-            
-            case 'a':
-                extension = rindex(optarg, '.');
-                argsp->audioEncoder =
-                    getCodec(extension, engine->audioEncoders);
-
-                if (!argsp->audioEncoder) {
-                    fprintf(stderr, "Unknown audio file extension: %s\n",
-                            extension);     
-                    exit(EXIT_FAILURE);
-                }
-                argsp->audioFile = optarg;
-
-                break;
-
-            case 's':
-                extension = rindex(optarg, '.');
-                if (extension == NULL) {
-                    fprintf(stderr, "Speech file without extension: %s\n",
-                            optarg);
-                    exit(EXIT_FAILURE);
-                }
-
-                argsp->speechEncoder =
-                    getCodec(extension, engine->speechEncoders);
-
-                if (!argsp->speechEncoder) {
-                    fprintf(stderr, "Unknown speech file extension: %s\n",
-                            extension);
-                    exit(EXIT_FAILURE);
-                }
-                argsp->speechFile = optarg;
-
-                break;
-
-            case 'v':
-                extension = rindex(optarg, '.');
-                if (extension == NULL) {
-                    fprintf(stderr, "Video file without extension: %s\n",
-                            optarg);
-                    exit(EXIT_FAILURE);
-                }
-
-                argsp->videoEncoder =
-                    getCodec(extension, engine->videoEncoders);
-
-                if (!argsp->videoEncoder) {
-                    fprintf(stderr, "Unknown video file extension: %s\n",
-                            extension);
-                    exit(EXIT_FAILURE);
-                }
-                argsp->videoFile = optarg;
-
-                break;
-
-            case 'y':
-                switch (atoi(optarg)) {
-                    case 1:
-                        argsp->videoStd = VideoStd_D1_NTSC;
-                        argsp->videoStdString = "D1 NTSC";
-                        break;
-                    case 2:
-                        argsp->videoStd = VideoStd_D1_PAL;
-                        argsp->videoStdString = "D1 PAL";
-                        break;
-                    case 3:
-                        argsp->videoStd = VideoStd_720P_60;
-                        argsp->videoStdString = "720P 60Hz";
-                        break;
-                    case 5:
-                        argsp->videoStd = VideoStd_1080I_30;
-                        argsp->videoStdString = "1080I 30Hz";
-                        break;
-                    default:
-                        fprintf(stderr, "Unknown display standard\n");
-                        usage();
-                        exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'I':
-                switch (atoi(optarg)) {
-                    case 1:
-                        argsp->videoInput = Capture_Input_COMPOSITE;
-                        break;
-                    case 2:
-                        argsp->videoInput = Capture_Input_SVIDEO;
-                        break;
-                    case 3:
-                        argsp->videoInput = Capture_Input_COMPONENT;
-                        break;
-                    case 4:
-                        argsp->videoInput = Capture_Input_CAMERA;
-                        break;
-                    default:
-                        fprintf(stderr, "Unknown video input\n");
-                        usage();
-                        exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'r':
-            {
-                Int32 imageWidth, imageHeight;
-
-                if (sscanf(optarg, "%ldx%ld", &imageWidth,
-                                              &imageHeight) != 2) {
-                    fprintf(stderr, "Invalid resolution supplied (%s)\n",
-                            optarg);
-                    usage();
-                    exit(EXIT_FAILURE);
-                }
-
-                /* Sanity check resolution */
-                if (imageWidth < 2UL || imageHeight < 2UL ||
-                    imageWidth > VideoStd_1080I_WIDTH ||
-                    imageHeight > VideoStd_1080I_HEIGHT) {
-                    fprintf(stderr, "Video resolution must be between %dx%d "
-                            "and %dx%d\n", 2, 2, VideoStd_1080I_WIDTH,
-                            VideoStd_1080I_HEIGHT);
-                    exit(EXIT_FAILURE);
-                }
-
-                argsp->imageWidth  = imageWidth;
-                argsp->imageHeight = imageHeight;
-                break;
-            }
-
-            case 'b':
-                argsp->videoBitRate = atoi(optarg);
-                argsp->videoBitRateString = optarg;
-                break;
-
-            case 'p':
-                argsp->soundBitRate = atoi(optarg);
-                argsp->soundBitRateString = optarg;
-                break;
-
-            case 'u':
-                argsp->sampleRate = atoi(optarg);
-                argsp->sampleRateString = optarg;
-                break;
-
-            case 'l':
-                argsp->soundInput = Sound_Input_LINE;
-                break;
-
-            case 'k':
-                argsp->keyboard = TRUE;
-                break;
-
-            case 't':
-                argsp->time = atoi(optarg);
-                break;
-
-            case 'o':
-                argsp->osd = TRUE;
-                break;
-
-            case 'w':
-                argsp->previewDisabled = TRUE;
-                break;
-
-            case 'f':
-                argsp->writeDisabled = TRUE;
-                break;
-
-            case 'h':
-                usage();
-                exit(EXIT_SUCCESS);
-
-            default:
-                usage();
-                exit(EXIT_FAILURE);
-        }
-    }
-
-    /* 
-     * If video input is not set, set it to the default based on display
-     * video standard.
-     */
-    if (argsp->videoInput == Capture_Input_COUNT) {
-        switch (argsp->videoStd) {
-            case VideoStd_D1_NTSC:
-            case VideoStd_D1_PAL:
-                argsp->videoInput = Capture_Input_COMPOSITE;
-                break;
-            case VideoStd_720P_60:
-                argsp->videoInput = Capture_Input_COMPONENT;
-                break;
-            case VideoStd_1080I_30:
-                argsp->videoInput = Capture_Input_CAMERA;
-                break;
-            default:
-                fprintf(stderr, "Unknown display standard\n");
-                usage();
-                exit(EXIT_FAILURE);
-                break;
-        }
-    }
-}
-
-/******************************************************************************
- * validateArgs
- ******************************************************************************/
-static Int validateArgs(Args *argsp)
-{
-    Bool failed = FALSE;
-
-    /* Need at least one file to encode and only one sound file */
-    if ((!argsp->videoFile && !(argsp->audioFile || argsp->speechFile)) ||
-        (argsp->audioFile && argsp->speechFile)) {
-        usage();
-        return FAILURE;
-    }
-
-    /* Verify video standard is supported by input */
-    switch (argsp->videoInput) {
-        case Capture_Input_COMPOSITE:
-        case Capture_Input_SVIDEO:
-            if ((argsp->videoStd != VideoStd_D1_PAL) && (argsp->videoStd !=
-                VideoStd_D1_NTSC)) {
-                failed = TRUE;
-            }
-            break;
-        case Capture_Input_COMPONENT:
-            if ((argsp->videoStd != VideoStd_720P_60) && (argsp->videoStd
-                != VideoStd_1080I_30)) {
-                failed = TRUE;
-            }
-            break;
-        case Capture_Input_CAMERA:
-            break;
-        default:
-            fprintf(stderr, "Invalid video input found in validation.\n");
-            usage();
-            return FAILURE;
-    }
-
-    if (failed) {
-            fprintf(stderr, "This combination of video input and video" 
-                "standard is not supported.\n");
-            usage();
-            return FAILURE;
-    }
-    
-    return SUCCESS;
-}
 
 /******************************************************************************
  * uiSetup
@@ -497,15 +163,8 @@ static Void uiSetup(UI_Handle hUI, Args *argsp)
         UI_updateValue(hUI, UI_Value_VideoCodec, "N/A");
     }
 
-    if (argsp->audioEncoder) {
-        UI_updateValue(hUI, UI_Value_SoundCodec,argsp->audioEncoder->uiString);
-    }
-    else if (argsp->speechEncoder) {
-        UI_updateValue(hUI, UI_Value_SoundCodec,argsp->speechEncoder->uiString);
-    }
-    else {
-        UI_updateValue(hUI, UI_Value_SoundCodec, "N/A");
-    }
+    UI_updateValue(hUI, UI_Value_SoundCodec, "N/A");
+
 
     UI_updateValue(hUI, UI_Value_ImageResolution, "N/A");
     UI_updateValue(hUI, UI_Value_SoundFrequency, "N/A");
@@ -526,29 +185,14 @@ static Int launchInterface(Args * argsp)
     addArg(i, "-d");
     addArg(i, "Encode");
 
-    if (argsp->speechFile) {
-        addArg(i, "-s");
-        addArg(i, argsp->speechFile);
-    }
-
     if (argsp->videoFile) {
         addArg(i, "-v");
         addArg(i, argsp->videoFile);
     }
 
-    if (argsp->audioFile) {
-        addArg(i, "-a");
-        addArg(i, argsp->audioFile);
-    }
-
     if (argsp->videoBitRateString) {
         addArg(i, "-b");
         addArg(i, argsp->videoBitRateString);
-    }
-
-    if (argsp->soundBitRateString) {
-        addArg(i, "-p");
-        addArg(i, argsp->soundBitRateString);
     }
 
     if (argsp->sampleRateString) {
@@ -633,168 +277,6 @@ static Int launchInterface(Args * argsp)
 }
 
 /******************************************************************************
- * getConfigFromInterface
- ******************************************************************************/
-static Int getConfigFromInterface(Args * argsp, UI_Handle hUI, Bool * stopped)
-{
-    Char * extension;
-    Char * cfgString;
-    Char option = 0;
-
-    *stopped = FALSE;
-
-    UI_getConfig(hUI, &option, &cfgString);
-
-    /* Keep getting configuration strings until ETB */
-    while (option != '\27') {
-        switch(option) {
-            case 'a':
-                if (strcmp(cfgString, "") == 0) {
-                    /* 
-                     * If string is empty, cancel sound file options selected 
-                     * on command line. 
-                     */
-                    argsp->audioEncoder = NULL;
-                    argsp->audioFile = NULL;
-                    argsp->speechEncoder = NULL;
-                    argsp->speechFile = NULL;
-                    break;
-                }
-                extension = rindex(cfgString, '.');
-                argsp->audioEncoder =
-                    getCodec(extension, engine->audioEncoders);
-
-                if (!argsp->audioEncoder) {
-                    fprintf(stderr, "Unknown audio file extension: %s\n",
-                            extension);     
-                    exit(EXIT_FAILURE);
-                }
-                argsp->audioFile = cfgString;
-
-                break;
-
-            case 's':
-                if (strcmp(cfgString, "") == 0) {
-                    /* 
-                     * If string is empty, cancel sound file options selected 
-                     * on command line. 
-                     */
-                    argsp->speechEncoder = NULL;
-                    argsp->speechFile = NULL;
-                    argsp->speechEncoder = NULL;
-                    argsp->speechFile = NULL;
-                    break;
-                }
-                extension = rindex(cfgString, '.');
-                if (extension == NULL) {
-                    fprintf(stderr, "Speech file without extension: %s\n",
-                            cfgString);
-                    exit(EXIT_FAILURE);
-                }
-
-                argsp->speechEncoder =
-                    getCodec(extension, engine->speechEncoders);
-
-                if (!argsp->speechEncoder) {
-                    fprintf(stderr, "Unknown speech file extension: %s\n",
-                            extension);
-                    exit(EXIT_FAILURE);
-                }
-                argsp->speechFile = cfgString;
-
-                break;
-
-            case 'v':
-                if (strcmp(cfgString, "") == 0) {
-                    /* 
-                     * If string is empty, cancel video file option selected 
-                     * on command line. 
-                     */
-                    argsp->videoEncoder = NULL;
-                    argsp->videoFile = NULL;
-                    break;
-                }
-                extension = rindex(cfgString, '.');
-                if (extension == NULL) {
-                    fprintf(stderr, "Video file without extension: %s\n",
-                            cfgString);
-                    exit(EXIT_FAILURE);
-                }
-
-                argsp->videoEncoder =
-                    getCodec(extension, engine->videoEncoders);
-
-                if (!argsp->videoEncoder) {
-                    fprintf(stderr, "Unknown video file extension: %s\n",
-                            extension);
-                    exit(EXIT_FAILURE);
-                }
-                argsp->videoFile = cfgString;
-
-                break;
-
-            case 'y':
-                switch (atoi(cfgString)) {
-                    case 1:
-                        argsp->videoStd = VideoStd_D1_NTSC;
-                        argsp->videoStdString = "D1 NTSC";
-                        break;
-                    case 2:
-                        argsp->videoStd = VideoStd_D1_PAL;
-                        argsp->videoStdString = "D1 PAL";
-                        break;
-                    case 3:
-                        argsp->videoStd = VideoStd_720P_60;
-                        argsp->videoStdString = "720P 60Hz";
-                        break;
-                    case 5:
-                        argsp->videoStd = VideoStd_1080I_30;
-                        argsp->videoStdString = "1080I 30Hz";
-                        break;
-                    default:
-                        fprintf(stderr, "Invalid display standard set by"
-                            " interface\n");
-                        exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'b':
-                argsp->videoBitRate = atoi(cfgString);
-                argsp->videoBitRateString = cfgString;
-                break;
-
-            case 'p':
-                argsp->soundBitRate = atoi(cfgString);
-                argsp->soundBitRateString = cfgString;
-                break;
-
-            case 'u':
-                argsp->sampleRate = atoi(cfgString);
-                argsp->sampleRateString = cfgString;
-                break;
-
-            case 'w':
-                argsp->previewDisabled = TRUE;
-                break;
-
-            case 'f':
-                argsp->writeDisabled = TRUE;
-                break;
-
-            case '\33':
-                *stopped = TRUE;
-                return SUCCESS;
-
-            default:
-                ERR("Error in getting configuration from interface\n");
-                return FAILURE;
-        }
-        UI_getConfig(hUI, &option, &cfgString);
-    }
-    return SUCCESS;
-}
-
-/******************************************************************************
  * main
  ******************************************************************************/
 Int main(Int argc, Char *argv[])
@@ -816,13 +298,9 @@ Int main(Int argc, Char *argv[])
     pthread_t           captureThread;
     pthread_t           writerThread;
     pthread_t           videoThread;
-    pthread_t           audioThread;
-    pthread_t           speechThread;
     CaptureEnv          captureEnv;
     WriterEnv           writerEnv;
     VideoEnv            videoEnv;
-    SpeechEnv           speechEnv;
-    AudioEnv            audioEnv;
     CtrlEnv             ctrlEnv;
     Int                 numThreads;
     pthread_attr_t      attr;
@@ -833,12 +311,10 @@ Int main(Int argc, Char *argv[])
     Dmai_clear(captureEnv);
     Dmai_clear(writerEnv);
     Dmai_clear(videoEnv);
-    Dmai_clear(speechEnv);
-    Dmai_clear(audioEnv);
     Dmai_clear(ctrlEnv);
 
     /* Parse the arguments given to the app and set the app environment */
-    parseArgs(argc, argv, &args);
+    args.videoEncoder = getCodec(".264", engine->videoEncoders);
 
     printf("Encode demo started.\n");
 
@@ -872,23 +348,6 @@ Int main(Int argc, Char *argv[])
     if (hUI == NULL) {
         cleanup(EXIT_FAILURE);
     }
-
-    /* Get configuration from QT interface if necessary */
-    if (args.osd) {
-        status = getConfigFromInterface(&args, hUI, &stopped);
-        if (status == FAILURE) {
-            ERR("Failed to get valid configuration from the GUI\n");
-            cleanup(EXIT_FAILURE);
-        }
-        else if (stopped == TRUE) {
-            cleanup(EXIT_SUCCESS);
-        }
-    }
-
-    /* Validate arguments */
-    if (validateArgs(&args) == FAILURE) {
-        cleanup(EXIT_FAILURE);
-    }
     
     /* Set up the user interface */
     uiSetup(hUI, &args);
@@ -908,9 +367,6 @@ Int main(Int argc, Char *argv[])
         numThreads += 3;
     }
 
-    if (args.audioFile || args.speechFile) {
-        numThreads += 1;
-    }
     /* Create the objects which synchronizes the thread init and cleanup */
     hRendezvousCapStd  = Rendezvous_create(2, &rzvAttrs);
     hRendezvousInit = Rendezvous_create(numThreads, &rzvAttrs);
@@ -1046,64 +502,7 @@ Int main(Int argc, Char *argv[])
         initMask |= WRITERTHREADCREATED;
 
     }
-    /* Create the audio thread if a file name is supplied */
-    if (args.audioFile) {
-        /* Set the thread priority */
-        schedParam.sched_priority = AUDIO_THREAD_PRIORITY;
-        if (pthread_attr_setschedparam(&attr, &schedParam)) {
-            ERR("Failed to set scheduler parameters\n");
-            cleanup(EXIT_FAILURE);
-        }
 
-        /* Create the audio thread */
-        audioEnv.hRendezvousInit    = hRendezvousInit;
-        audioEnv.hRendezvousCleanup = hRendezvousCleanup;
-        audioEnv.hPauseProcess      = hPauseProcess;
-        audioEnv.engineName         = engine->engineName;
-        audioEnv.audioEncoder       = args.audioEncoder->codecName;
-        audioEnv.params             = args.audioEncoder->params;
-        audioEnv.dynParams          = args.audioEncoder->dynParams;
-        audioEnv.audioFile          = args.audioFile;
-        audioEnv.soundInput         = args.soundInput;
-        audioEnv.soundBitRate       = args.soundBitRate;
-        audioEnv.sampleRate         = args.sampleRate;
-        audioEnv.writeDisabled      = args.writeDisabled;
-        if (pthread_create(&audioThread, &attr, audioThrFxn, &audioEnv)) {
-            ERR("Failed to create audio thread\n");
-            cleanup(EXIT_FAILURE);
-        }
-
-        initMask |= AUDIOTHREADCREATED;
-    }
-
-
-    /* Create the speech thread if a file name is supplied */
-    if (args.speechFile) {
-        /* Set the thread priority */
-        schedParam.sched_priority = SPEECH_THREAD_PRIORITY;
-        if (pthread_attr_setschedparam(&attr, &schedParam)) {
-            ERR("Failed to set scheduler parameters\n");
-            cleanup(EXIT_FAILURE);
-        }
-
-        /* Create the speech thread */
-        speechEnv.hRendezvousInit    = hRendezvousInit;
-        speechEnv.hRendezvousCleanup = hRendezvousCleanup;
-        speechEnv.hPauseProcess      = hPauseProcess;
-        speechEnv.speechFile         = args.speechFile;
-        speechEnv.soundInput         = args.soundInput;
-        speechEnv.speechEncoder      = args.speechEncoder->codecName;
-        speechEnv.params             = args.speechEncoder->params;
-        speechEnv.dynParams          = args.speechEncoder->dynParams;
-        speechEnv.engineName         = engine->engineName;
-
-        if (pthread_create(&speechThread, &attr, speechThrFxn, &speechEnv)) {
-            ERR("Failed to create speech thread\n");
-            cleanup(EXIT_FAILURE);
-        }
-
-        initMask |= SPEECHTHREADCREATED;
-    }
 
     /* Main thread becomes the control thread */
     ctrlEnv.hRendezvousInit    = hRendezvousInit;
@@ -1138,21 +537,7 @@ cleanup:
     if (hPauseProcess) Pause_off(hPauseProcess);
 
     /* Wait until the other threads terminate */
-    if (initMask & SPEECHTHREADCREATED) {
-        if (pthread_join(speechThread, &ret) == 0) {
-            if (ret == THREAD_FAILURE) {
-                status = EXIT_FAILURE;
-            }
-        }
-    }
 
-    if (initMask & AUDIOTHREADCREATED) {
-        if (pthread_join(audioThread, &ret) == 0) {
-            if (ret == THREAD_FAILURE) {
-                status = EXIT_FAILURE;
-            }
-        }
-    }
     if (initMask & VIDEOTHREADCREATED) {
         if (pthread_join(videoThread, &ret) == 0) {
             if (ret == THREAD_FAILURE) {

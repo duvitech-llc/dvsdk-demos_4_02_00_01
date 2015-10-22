@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  This file conforms to the DTD xdc/cfg/configuration.dtd -->
-<configuration name="encodedecode_config/encodedecode.xv5T"
+<configuration name="camstreamer_config/camstreamer.xv5T"
     platformName="ti.platforms.evmDM365"
     globalSection="null"
     sysStack="4096"
     stack="4096"
     heap="4096"
     argSize="512"
-    execCmd="@%24%28ECHO%29%20ti.platforms.evmDM365%20platform%20package%20cannot%20execute%20/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encodedecode/encodedecode_config/encodedecode.xv5T%20on%20Linux%0A@%24%28ECHO%29%20Check%20for%20updates%20to%20this%20package%20at%3A%0A@%24%28ECHO%29%20https%3A//www-a.ti.com/downloads/sds_support/targetcontent/rtsc/index.html%0A%09%3A"
+    execCmd="@%24%28ECHO%29%20ti.platforms.evmDM365%20platform%20package%20cannot%20execute%20/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer_config/camstreamer.xv5T%20on%20Linux%0A@%24%28ECHO%29%20Check%20for%20updates%20to%20this%20package%20at%3A%0A@%24%28ECHO%29%20https%3A//www-a.ti.com/downloads/sds_support/targetcontent/rtsc/index.html%0A%09%3A"
     endian="little"
     codeModel="null"
     dataModel="null">
@@ -15,6 +15,9 @@
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,3.4,3"
             usedby="gnu.targets.arm.rtsv5T"/>
+    <target name="gnu.targets.arm.GCArmv5T"
+            version="1,0,4.3,3"
+            usedby="ti.xdais.dm.examples.g711"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,0"
             usedby="ti.sdo.fc.memutils"/>
@@ -26,10 +29,10 @@
             usedby="ti.sdo.fc.utils"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,0"
-            usedby="ti.sdo.fc.ires.memtcm"/>
+            usedby="ti.sdo.fc.ires.hdvicp"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,0"
-            usedby="ti.sdo.fc.ires.hdvicp"/>
+            usedby="ti.sdo.fc.ires.memtcm"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,0"
             usedby="ti.sdo.utils.trace"/>
@@ -77,12 +80,6 @@
             usedby="ti.sdo.ce"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,1"
-            usedby="ti.sdo.ce.video1"/>
-    <target name="gnu.targets.arm.GCArmv5T"
-            version="1,0,4.2,1"
-            usedby="ti.sdo.ce.video2"/>
-    <target name="gnu.targets.arm.GCArmv5T"
-            version="1,0,4.2,1"
             usedby="ti.sdo.ce.speech"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,1"
@@ -98,13 +95,19 @@
             usedby="ti.sdo.ce.video"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,1"
+            usedby="ti.sdo.ce.video1"/>
+    <target name="gnu.targets.arm.GCArmv5T"
+            version="1,0,4.2,1"
+            usedby="ti.sdo.ce.video2"/>
+    <target name="gnu.targets.arm.GCArmv5T"
+            version="1,0,4.2,1"
             usedby="ti.sdo.ce.image"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.2,1"
             usedby="ti.sdo.ce.image1"/>
     <target name="gnu.targets.arm.GCArmv5T"
             version="1,0,4.3,3"
-            usedby="encodedecode_config"/>
+            usedby="camstreamer_config"/>
 </targets>
 <imports>
     <package name="xdc.services.global" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/">
@@ -263,6 +266,13 @@
     </package>
     <package name="gnu.targets.arm.rtsv5T" version="1, 0, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/xdctools_3_16_03_36/packages/">
     </package>
+    <package name="ti.sdo.linuxutils.vicp" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/linuxutils_2_26_01_02/packages/">
+        <module name="ti.sdo.linuxutils.vicp.VICP"
+                used="true"
+                uses="">
+            <feature name="debug" type="boolean" value="false"/>
+        </module>
+    </package>
     <package name="ti.sdo.linuxutils.edma" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/linuxutils_2_26_01_02/packages/">
         <module name="ti.sdo.linuxutils.edma.EDMA"
                 used="true"
@@ -276,6 +286,8 @@
                 uses="">
             <feature name="debug" type="boolean" value="false"/>
         </module>
+    </package>
+    <package name="ti.xdais.dm.examples.g711" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/examples/">
     </package>
     <package name="ti.sdo.fc.ires" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/framework-components_2_26_00_01/packages/">
     </package>
@@ -307,6 +319,12 @@
             <feature name="noOS" type="boolean" value="false"/>
         </module>
     </package>
+    <package name="ittiam.codecs.aaclc_enc" version="" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
+        <module name="ittiam.codecs.aaclc_enc.AACLC_ENC"
+                used="false"
+                uses="">
+        </module>
+    </package>
     <package name="ti.sdo.fc.utils" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/framework-components_2_26_00_01/packages/">
         <module name="ti.sdo.fc.utils.SHM"
                 used="false"
@@ -329,6 +347,16 @@
                 uses="">
         </module>
     </package>
+    <package name="ti.sdo.fc.ires.hdvicp" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/framework-components_2_26_00_01/packages/">
+        <module name="ti.sdo.fc.ires.hdvicp.HDVICP"
+                used="true"
+                uses="">
+            <feature name="autoRegister" type="boolean" value="true"/>
+            <feature name="ipcKeyBase" type="number" value="1230390344"/>
+            <feature name="debug" type="boolean" value="false"/>
+            <feature name="trace" type="boolean" value="false"/>
+        </module>
+    </package>
     <package name="ti.sdo.fc.ires.memtcm" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/framework-components_2_26_00_01/packages/">
         <module name="ti.sdo.fc.ires.memtcm.MEMTCM"
                 used="true"
@@ -336,22 +364,6 @@
             <feature name="autoRegister" type="boolean" value="true"/>
             <feature name="cmemBlockId" type="number" value="1"/>
             <feature name="ipcKeyBase" type="number" value="1296258125"/>
-            <feature name="debug" type="boolean" value="false"/>
-            <feature name="trace" type="boolean" value="false"/>
-        </module>
-    </package>
-    <package name="ti.sdo.linuxutils.vicp" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/linuxutils_2_26_01_02/packages/">
-        <module name="ti.sdo.linuxutils.vicp.VICP"
-                used="false"
-                uses="">
-        </module>
-    </package>
-    <package name="ti.sdo.fc.ires.hdvicp" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/framework-components_2_26_00_01/packages/">
-        <module name="ti.sdo.fc.ires.hdvicp.HDVICP"
-                used="true"
-                uses="">
-            <feature name="autoRegister" type="boolean" value="true"/>
-            <feature name="ipcKeyBase" type="number" value="1230390344"/>
             <feature name="debug" type="boolean" value="false"/>
             <feature name="trace" type="boolean" value="false"/>
         </module>
@@ -381,12 +393,6 @@
             <feature name="trace" type="boolean" value="false"/>
         </module>
     </package>
-    <package name="ti.sdo.codecs.mpeg4enc_hdvicp" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.mpeg4enc_hdvicp.MPEG4ENC_HDVICP"
-                used="false"
-                uses="">
-        </module>
-    </package>
     <package name="ti.sdo.codecs.h264enc" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
         <module name="ti.sdo.codecs.h264enc.H264ENC"
                 used="false"
@@ -395,24 +401,6 @@
     </package>
     <package name="ti.sdo.codecs.mpeg2enc" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
         <module name="ti.sdo.codecs.mpeg2enc.MPEG2ENC"
-                used="false"
-                uses="">
-        </module>
-    </package>
-    <package name="ti.sdo.codecs.mpeg4dec_hdvicp" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.mpeg4dec_hdvicp.MPEG4DEC_HDVICP"
-                used="false"
-                uses="">
-        </module>
-    </package>
-    <package name="ti.sdo.codecs.h264dec" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.h264dec.H264DEC"
-                used="false"
-                uses="">
-        </module>
-    </package>
-    <package name="ti.sdo.codecs.mpeg2dec" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.mpeg2dec.MPEG2DEC"
                 used="false"
                 uses="">
         </module>
@@ -706,6 +694,12 @@
                 uses="">
             <feature name="debug" type="boolean" value="false"/>
             <feature name="trace" type="boolean" value="false"/>
+        </module>
+    </package>
+    <package name="ti.sdo.codecs.mpeg4enc" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
+        <module name="ti.sdo.codecs.mpeg4enc.MPEG4ENC"
+                used="false"
+                uses="">
         </module>
     </package>
     <package name="ti.sdo.ce.global" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
@@ -1235,19 +1229,19 @@
             <feature name="stack" type="number" value="4096"/>
             <feature name="heap" type="number" value="4096"/>
             <feature name="argSize" type="number" value="512"/>
-            <feature name="execCmd" type="string" value="@%24%28ECHO%29%20ti.platforms.evmDM365%20platform%20package%20cannot%20execute%20/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encodedecode/encodedecode_config/encodedecode.xv5T%20on%20Linux%0A@%24%28ECHO%29%20Check%20for%20updates%20to%20this%20package%20at%3A%0A@%24%28ECHO%29%20https%3A//www-a.ti.com/downloads/sds_support/targetcontent/rtsc/index.html%0A%09%3A"/>
+            <feature name="execCmd" type="string" value="@%24%28ECHO%29%20ti.platforms.evmDM365%20platform%20package%20cannot%20execute%20/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/camstreamer_config/camstreamer.xv5T%20on%20Linux%0A@%24%28ECHO%29%20Check%20for%20updates%20to%20this%20package%20at%3A%0A@%24%28ECHO%29%20https%3A//www-a.ti.com/downloads/sds_support/targetcontent/rtsc/index.html%0A%09%3A"/>
             <feature name="linkTemplate" type="object" value="null"/>
-            <feature name="main" type="undefined" value="undefined"/>
+            <feature name="main" type="object" value="null"/>
             <feature name="sectMap" type="object" value="%5B%0A%0A%5D">
             </feature>
             <feature name="system" type="undefined" value="undefined"/>
-            <feature name="name" type="string" value="encodedecode.xv5T"/>
-            <feature name="buildPackage" type="string" value="encodedecode_config"/>
+            <feature name="name" type="string" value="camstreamer.xv5T"/>
+            <feature name="buildPackage" type="string" value="camstreamer_config"/>
             <feature name="endian" type="string" value="little"/>
             <feature name="codeModel" type="object" value="null"/>
             <feature name="dataModel" type="object" value="null"/>
             <feature name="build" type="object" value="%5Bobject%20Object%5D"/>
-            <feature name="cpu" type="xdc.platform.IExeContext.Instance" value="%7Bid%3A%200%2C%20catalogName%3A%20ti.catalog.arm%2C%20deviceName%3A%20TMS320DM365%2C%20revision%3A%20%2C%20clockRate%3A%200xd8%2C%20board%3A%20%7Bid%3A%200%2C%20boardName%3A%20evmDM365%2C%20boardFamily%3A%20evmDM365%2C%20boardRevision%3A%20null%7D%2C%20attrs%3A%20xdc.services.intern.xsr.Value%24Obj@687ea9%3A%3A%28xdc.platform.ICpuDataSheet.Instance%29ti.catalog.arm.TMS320DM365.Instance%230%2C%20memoryMap%3A%20%5B%0A%5B%27IRAM0%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Instruction%20RAM0%2C%20name%3A%20IRAM0%2C%20space%3A%20code%2C%20page%3A%20undefined%2C%20base%3A%200x0%2C%20len%3A%200x4000%2C%20access%3A%20RWX%7D%5D%2C%0A%5B%27IRAM1%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Instruction%20RAM1%2C%20name%3A%20IRAM1%2C%20space%3A%20code%2C%20page%3A%20undefined%2C%20base%3A%200x4000%2C%20len%3A%200x4000%2C%20access%3A%20RWX%7D%5D%2C%0A%5B%27DRAM0%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Data%20RAM0%2C%20name%3A%20DRAM0%2C%20space%3A%20data%2C%20page%3A%20undefined%2C%20base%3A%200x10000%2C%20len%3A%200x4000%2C%20access%3A%20RW%7D%5D%2C%0A%5B%27DRAM1%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Data%20RAM1%2C%20name%3A%20DRAM1%2C%20space%3A%20data%2C%20page%3A%20undefined%2C%20base%3A%200x14000%2C%20len%3A%200x4000%2C%20access%3A%20RW%7D%5D%2C%0A%5B%27DDR%27%2C%20%7Bcomment%3A%20undefined%2C%20name%3A%20DDR%2C%20space%3A%20undefined%2C%20page%3A%20undefined%2C%20base%3A%200x80000000%2C%20len%3A%200x1000000%2C%20access%3A%20undefined%7D%5D%0A%5D%7D"/>
+            <feature name="cpu" type="xdc.platform.IExeContext.Instance" value="%7Bid%3A%200%2C%20catalogName%3A%20ti.catalog.arm%2C%20deviceName%3A%20TMS320DM365%2C%20revision%3A%20%2C%20clockRate%3A%200xd8%2C%20board%3A%20%7Bid%3A%200%2C%20boardName%3A%20evmDM365%2C%20boardFamily%3A%20evmDM365%2C%20boardRevision%3A%20null%7D%2C%20attrs%3A%20xdc.services.intern.xsr.Value%24Obj@1a5ec6c%3A%3A%28xdc.platform.ICpuDataSheet.Instance%29ti.catalog.arm.TMS320DM365.Instance%230%2C%20memoryMap%3A%20%5B%0A%5B%27IRAM0%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Instruction%20RAM0%2C%20name%3A%20IRAM0%2C%20space%3A%20code%2C%20page%3A%20undefined%2C%20base%3A%200x0%2C%20len%3A%200x4000%2C%20access%3A%20RWX%7D%5D%2C%0A%5B%27IRAM1%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Instruction%20RAM1%2C%20name%3A%20IRAM1%2C%20space%3A%20code%2C%20page%3A%20undefined%2C%20base%3A%200x4000%2C%20len%3A%200x4000%2C%20access%3A%20RWX%7D%5D%2C%0A%5B%27DRAM0%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Data%20RAM0%2C%20name%3A%20DRAM0%2C%20space%3A%20data%2C%20page%3A%20undefined%2C%20base%3A%200x10000%2C%20len%3A%200x4000%2C%20access%3A%20RW%7D%5D%2C%0A%5B%27DRAM1%27%2C%20%7Bcomment%3A%20Internal%20ARM%20Data%20RAM1%2C%20name%3A%20DRAM1%2C%20space%3A%20data%2C%20page%3A%20undefined%2C%20base%3A%200x14000%2C%20len%3A%200x4000%2C%20access%3A%20RW%7D%5D%2C%0A%5B%27DDR%27%2C%20%7Bcomment%3A%20undefined%2C%20name%3A%20DDR%2C%20space%3A%20undefined%2C%20page%3A%20undefined%2C%20base%3A%200x80000000%2C%20len%3A%200x1000000%2C%20access%3A%20undefined%7D%5D%0A%5D%7D"/>
             <feature name="platformName" type="string" value="ti.platforms.evmDM365"/>
             <feature name="platform" type="xdc.platform.IPlatform.Instance" value="%7BexternalMemoryMap%3A%20%5B%0A%5B%27DDR%27%2C%20%7Bcomment%3A%20undefined%2C%20name%3A%20DDR%2C%20space%3A%20undefined%2C%20page%3A%20undefined%2C%20base%3A%200x80000000%2C%20len%3A%200x1000000%2C%20access%3A%20undefined%7D%5D%0A%5D%2C%20customMemoryMap%3A%20%5B%0A%0A%5D%2C%20renameMap%3A%20%5B%0A%0A%5D%2C%20dataMemory%3A%20DDR%2C%20codeMemory%3A%20DDR%2C%20stackMemory%3A%20DDR%2C%20sectMap%3A%20%5B%0A%0A%5D%7D"/>
             <feature name="global" type="object" value="%5B%0A%0A%5D">
@@ -1380,10 +1374,10 @@
             <feature name="useHeap" type="boolean" value="false"/>
             <feature name="useCache" type="boolean" value="false"/>
             <feature name="ipcKeyBase" type="number" value="1330072641"/>
-            <feature name="groupUsed" type="object" value="%5Bfalse%2C%20true%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%5D"><vector id="ti.sdo.ce.alg.Settings/groupUsed" length="20">
-  <elem>false</elem>
+            <feature name="groupUsed" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%2C%20false%5D"><vector id="ti.sdo.ce.alg.Settings/groupUsed" length="20">
   <elem>true</elem>
-  <elem>false</elem>
+  <elem>true</elem>
+  <elem>true</elem>
   <elem>false</elem>
   <elem>false</elem>
   <elem>false</elem>
@@ -1445,6 +1439,26 @@
             <feature name="checked" type="boolean" value="false"/>
         </module>
     </package>
+    <package name="ti.sdo.ce.speech" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+    </package>
+    <package name="ti.sdo.ce.speech1" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+    </package>
+    <package name="ti.sdo.ce.audio" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+    </package>
+    <package name="ti.sdo.ce.audio1" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+    </package>
+    <package name="ti.sdo.ce.video" version="1, 0, 3" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+        <module name="ti.sdo.ce.video.VIDENCConfig"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+        <module name="ti.sdo.ce.video.VIDDECConfig"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+    </package>
     <package name="ti.sdo.ce.video1" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
         <module name="ti.sdo.ce.video1.VIDENC1Config"
                 used="true"
@@ -1457,22 +1471,55 @@
             <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
         </module>
     </package>
-    <package name="ti.sdo.codecs.mpeg4enc_hdvicp.ce" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.mpeg4enc_hdvicp.ce.MPEG4ENC_HDVICP"
+    <package name="ti.sdo.ce.video2" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+        <module name="ti.sdo.ce.video2.VIDDEC2Config"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+    </package>
+    <package name="ti.sdo.ce.image" version="1, 0, 3" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+        <module name="ti.sdo.ce.image.IMGDECConfig"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+        <module name="ti.sdo.ce.image.IMGENCConfig"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+    </package>
+    <package name="ti.sdo.ce.image1" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
+        <module name="ti.sdo.ce.image1.IMGDEC1Config"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+        <module name="ti.sdo.ce.image1.IMGENC1Config"
+                used="true"
+                uses="">
+            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
+        </module>
+    </package>
+    <package name="ti.sdo.dmai" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dmai_2_20_00_15/packages/">
+    </package>
+    <package name="ti.sdo.codecs.mpeg4enc.ce" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
+        <module name="ti.sdo.codecs.mpeg4enc.ce.MPEG4ENC"
                 used="true"
                 uses="">
             <feature name="isLocal" type="boolean" value="true"/>
-            <feature name="ialgFxns" type="string" value="MPEG4VENC_TI_IMPEG4VENC"/>
+            <feature name="ialgFxns" type="string" value="MP4VENC_TI_IMP4VENC"/>
             <feature name="idma3Fxns" type="undefined" value="undefined"/>
-            <feature name="iresFxns" type="string" value="MPEG4VENC_TI_IRES"/>
+            <feature name="iresFxns" type="string" value="MP4VENC_TI_IRES"/>
             <feature name="serverFxns" type="string" value="VIDENC1_SKEL"/>
             <feature name="stubFxns" type="string" value="VIDENC1_STUBS"/>
             <feature name="rpcProtocolVersion" type="number" value="0"/>
-            <feature name="uuid" type="number" value="2805129948"/>
+            <feature name="uuid" type="number" value="3544745280"/>
             <feature name="frameRate" type="undefined" value="undefined"/>
             <feature name="codecClassConfigurable" type="boolean" value="true"/>
             <feature name="useCache" type="undefined" value="undefined"/>
-            <feature name="manageInBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg4enc_hdvicp.ce.MPEG4ENC_HDVICP/manageInBufsCache" length="16">
+            <feature name="manageInBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg4enc.ce.MPEG4ENC/manageInBufsCache" length="16">
   <elem>true</elem>
   <elem>true</elem>
   <elem>true</elem>
@@ -1491,7 +1538,7 @@
   <elem>true</elem>
 </vector>
             </feature>
-            <feature name="manageOutBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg4enc_hdvicp.ce.MPEG4ENC_HDVICP/manageOutBufsCache" length="16">
+            <feature name="manageOutBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg4enc.ce.MPEG4ENC/manageOutBufsCache" length="16">
   <elem>true</elem>
   <elem>true</elem>
   <elem>true</elem>
@@ -1510,7 +1557,7 @@
   <elem>true</elem>
 </vector>
             </feature>
-            <feature name="alg" type="ti.sdo.codecs.mpeg4enc_hdvicp.MPEG4ENC_HDVICP.Module" value="%7Bwatermark%3A%20false%2C%20codeSection%3A%20undefined%2C%20udataSection%3A%20undefined%2C%20dataSection%3A%20undefined%7D"><module id="ti.sdo.codecs.mpeg4enc_hdvicp.MPEG4ENC_HDVICP">
+            <feature name="alg" type="ti.sdo.codecs.mpeg4enc.MPEG4ENC.Module" value="%7Bwatermark%3A%20false%2C%20codeSection%3A%20undefined%2C%20udataSection%3A%20undefined%2C%20dataSection%3A%20undefined%7D"><module id="ti.sdo.codecs.mpeg4enc.MPEG4ENC">
   <field name="watermark">false</field>
   <field name="codeSection">undefined</field>
   <field name="udataSection">undefined</field>
@@ -1643,244 +1690,47 @@
             </feature>
         </module>
     </package>
-    <package name="ti.sdo.ce.video2" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-        <module name="ti.sdo.ce.video2.VIDDEC2Config"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-    </package>
-    <package name="ti.sdo.codecs.mpeg4dec_hdvicp.ce" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.mpeg4dec_hdvicp.ce.MPEG4DEC_HDVICP"
+    <package name="ti.sdo.ce.examples.codecs.g711" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/examples/">
+        <module name="ti.sdo.ce.examples.codecs.g711.G711ENC"
                 used="true"
                 uses="">
             <feature name="isLocal" type="boolean" value="true"/>
-            <feature name="ialgFxns" type="string" value="MPEG4VDEC_TI_IMPEG4VDEC"/>
+            <feature name="ialgFxns" type="string" value="G711ENC_SUN_IG711ENC"/>
             <feature name="idma3Fxns" type="undefined" value="undefined"/>
-            <feature name="iresFxns" type="string" value="MPEG4VDEC_TI_IRES"/>
-            <feature name="serverFxns" type="string" value="VIDDEC2_SKEL"/>
-            <feature name="stubFxns" type="string" value="VIDDEC2_STUBS"/>
+            <feature name="iresFxns" type="undefined" value="undefined"/>
+            <feature name="serverFxns" type="string" value="SPHENC1_SKEL"/>
+            <feature name="stubFxns" type="string" value="SPHENC1_STUBS"/>
             <feature name="rpcProtocolVersion" type="number" value="0"/>
-            <feature name="uuid" type="number" value="2798854612"/>
+            <feature name="uuid" type="number" value="3048083571"/>
             <feature name="frameRate" type="undefined" value="undefined"/>
-            <feature name="codecClassConfigurable" type="boolean" value="true"/>
+            <feature name="codecClassConfigurable" type="undefined" value="undefined"/>
             <feature name="useCache" type="undefined" value="undefined"/>
-            <feature name="manageInBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg4dec_hdvicp.ce.MPEG4DEC_HDVICP/manageInBufsCache" length="16">
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-</vector>
-            </feature>
-            <feature name="manageOutBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg4dec_hdvicp.ce.MPEG4DEC_HDVICP/manageOutBufsCache" length="16">
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-</vector>
-            </feature>
-            <feature name="alg" type="ti.sdo.codecs.mpeg4dec_hdvicp.MPEG4DEC_HDVICP.Module" value="%7BcodeSection%3A%20undefined%2C%20udataSection%3A%20undefined%2C%20dataSection%3A%20undefined%7D"><module id="ti.sdo.codecs.mpeg4dec_hdvicp.MPEG4DEC_HDVICP">
-  <field name="codeSection">undefined</field>
-  <field name="udataSection">undefined</field>
-  <field name="dataSection">undefined</field>
-</module>
-            </feature>
+        </module>
+        <module name="ti.sdo.ce.examples.codecs.g711.G711DEC"
+                used="false"
+                uses="">
         </module>
     </package>
-    <package name="ti.sdo.codecs.h264dec.ce" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.h264dec.ce.H264DEC"
+    <package name="ittiam.codecs.aaclc_enc.ce" version="" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
+        <module name="ittiam.codecs.aaclc_enc.ce.AACLC_ENC"
                 used="true"
                 uses="">
             <feature name="isLocal" type="boolean" value="true"/>
-            <feature name="ialgFxns" type="string" value="H264VDEC_TI_IH264VDEC"/>
+            <feature name="ialgFxns" type="string" value="EAACPLUSENCODER_ITTIAM_IEAACPLUSENCODER"/>
             <feature name="idma3Fxns" type="undefined" value="undefined"/>
-            <feature name="iresFxns" type="string" value="H264VDEC_TI_IRES"/>
-            <feature name="serverFxns" type="string" value="VIDDEC2_SKEL"/>
-            <feature name="stubFxns" type="string" value="VIDDEC2_STUBS"/>
-            <feature name="rpcProtocolVersion" type="number" value="0"/>
-            <feature name="uuid" type="number" value="2701911697"/>
+            <feature name="iresFxns" type="string" value="AUDCDC_ITTIAM_IRES"/>
+            <feature name="serverFxns" type="string" value="AUDENC1_SKEL"/>
+            <feature name="stubFxns" type="string" value="AUDENC1_STUBS"/>
+            <feature name="rpcProtocolVersion" type="number" value="1"/>
+            <feature name="uuid" type="number" value="3082345429"/>
             <feature name="frameRate" type="undefined" value="undefined"/>
-            <feature name="codecClassConfigurable" type="boolean" value="true"/>
-            <feature name="useCache" type="undefined" value="undefined"/>
-            <feature name="manageInBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.h264dec.ce.H264DEC/manageInBufsCache" length="16">
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-</vector>
-            </feature>
-            <feature name="manageOutBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.h264dec.ce.H264DEC/manageOutBufsCache" length="16">
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-</vector>
-            </feature>
-            <feature name="alg" type="ti.sdo.codecs.h264dec.H264DEC.Module" value="%7Bwatermark%3A%20false%2C%20codeSection%3A%20undefined%2C%20udataSection%3A%20undefined%2C%20dataSection%3A%20undefined%7D"><module id="ti.sdo.codecs.h264dec.H264DEC">
-  <field name="watermark">false</field>
-  <field name="codeSection">undefined</field>
-  <field name="udataSection">undefined</field>
-  <field name="dataSection">undefined</field>
-</module>
+            <feature name="codecClassConfigurable" type="undefined" value="undefined"/>
+            <feature name="useCache" type="boolean" value="true"/>
+            <feature name="alg" type="ittiam.codecs.aaclc_enc.AACLC_ENC.Module" value="%7B%7D">
             </feature>
         </module>
     </package>
-    <package name="ti.sdo.codecs.mpeg2dec.ce" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codecs-dm365_4_02_00_00/packages/">
-        <module name="ti.sdo.codecs.mpeg2dec.ce.MPEG2DEC"
-                used="true"
-                uses="">
-            <feature name="isLocal" type="boolean" value="true"/>
-            <feature name="ialgFxns" type="string" value="MPEG2VDEC_TI_IMPEG2VDEC"/>
-            <feature name="idma3Fxns" type="undefined" value="undefined"/>
-            <feature name="iresFxns" type="string" value="MPEG2VDEC_TI_IRES"/>
-            <feature name="serverFxns" type="string" value="VIDDEC2_SKEL"/>
-            <feature name="stubFxns" type="string" value="VIDDEC2_STUBS"/>
-            <feature name="rpcProtocolVersion" type="number" value="0"/>
-            <feature name="uuid" type="number" value="2974277761"/>
-            <feature name="frameRate" type="undefined" value="undefined"/>
-            <feature name="codecClassConfigurable" type="boolean" value="true"/>
-            <feature name="useCache" type="undefined" value="undefined"/>
-            <feature name="manageInBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg2dec.ce.MPEG2DEC/manageInBufsCache" length="16">
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-</vector>
-            </feature>
-            <feature name="manageOutBufsCache" type="object" value="%5Btrue%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%2C%20true%5D"><vector id="ti.sdo.codecs.mpeg2dec.ce.MPEG2DEC/manageOutBufsCache" length="16">
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-  <elem>true</elem>
-</vector>
-            </feature>
-            <feature name="alg" type="ti.sdo.codecs.mpeg2dec.MPEG2DEC.Module" value="%7BcodeSection%3A%20undefined%2C%20udataSection%3A%20undefined%2C%20dataSection%3A%20undefined%7D"><module id="ti.sdo.codecs.mpeg2dec.MPEG2DEC">
-  <field name="codeSection">undefined</field>
-  <field name="udataSection">undefined</field>
-  <field name="dataSection">undefined</field>
-</module>
-            </feature>
-        </module>
-    </package>
-    <package name="ti.sdo.ce.speech" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-    </package>
-    <package name="ti.sdo.ce.speech1" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-    </package>
-    <package name="ti.sdo.ce.audio" version="1, 0, 2" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-    </package>
-    <package name="ti.sdo.ce.audio1" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-    </package>
-    <package name="ti.sdo.ce.video" version="1, 0, 3" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-        <module name="ti.sdo.ce.video.VIDENCConfig"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-        <module name="ti.sdo.ce.video.VIDDECConfig"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-    </package>
-    <package name="ti.sdo.ce.image" version="1, 0, 3" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-        <module name="ti.sdo.ce.image.IMGDECConfig"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-        <module name="ti.sdo.ce.image.IMGENCConfig"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-    </package>
-    <package name="ti.sdo.ce.image1" version="1, 0, 1" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/codec-engine_2_26_02_11/packages/">
-        <module name="ti.sdo.ce.image1.IMGDEC1Config"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-        <module name="ti.sdo.ce.image1.IMGENC1Config"
-                used="true"
-                uses="">
-            <feature name="codecsList" type="object" value="%5Bobject%20Object%5D"/>
-        </module>
-    </package>
-    <package name="ti.sdo.dmai" version="1, 0, 0" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dmai_2_20_00_15/packages/">
-    </package>
-    <package name="encodedecode_config" version="" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/encodedecode/">
+    <package name="camstreamer_config" version="" repository="/home/gvigelet/ti-dvsdk_dm368-evm_4_02_00_06/dvsdk-demos_4_02_00_01/dm365/camstreamer/">
     </package>
 </imports>
 </configuration>

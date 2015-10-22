@@ -66,7 +66,7 @@
 
 #include "video.h"
 #include "capture.h"
-#include "writer.h"
+#include "livestrm.h"
 #include "../ctrl.h"
 #include "../demo.h"
 #include "../ui.h"
@@ -75,7 +75,7 @@
 #define LOGSINITIALIZED         0x1
 #define DISPLAYTHREADCREATED    0x20
 #define CAPTURETHREADCREATED    0x40
-#define WRITERTHREADCREATED     0x80
+#define LIVETHREADCREATED     	0x80
 #define VIDEOTHREADCREATED      0x100
 
 /* Thread priorities */
@@ -296,10 +296,10 @@ Int main(Int argc, Char *argv[])
     UI_Handle           hUI                 = NULL;
     struct sched_param  schedParam;
     pthread_t           captureThread;
-    pthread_t           writerThread;
+    pthread_t           liveThread;
     pthread_t           videoThread;
     CaptureEnv          captureEnv;
-    WriterEnv           writerEnv;
+    LiveEnv           	liveEnv;
     VideoEnv            videoEnv;
     CtrlEnv             ctrlEnv;
     Int                 numThreads;
@@ -309,7 +309,7 @@ Int main(Int argc, Char *argv[])
 
     /* Zero out the thread environments */
     Dmai_clear(captureEnv);
-    Dmai_clear(writerEnv);
+    Dmai_clear(liveEnv);  // turn this into my live555 stream thread
     Dmai_clear(videoEnv);
     Dmai_clear(ctrlEnv);
 
@@ -435,11 +435,11 @@ Int main(Int argc, Char *argv[])
         Rendezvous_meet(hRendezvousCapStd);
 
         /* Create the writer fifos */
-        writerEnv.hInFifo = Fifo_create(&fAttrs);
-        writerEnv.hOutFifo = Fifo_create(&fAttrs);
+        liveEnv.hInFifo = Fifo_create(&fAttrs);
+        liveEnv.hOutFifo = Fifo_create(&fAttrs);
 
-        if (writerEnv.hInFifo == NULL || writerEnv.hOutFifo == NULL) {
-            ERR("Failed to open display fifos\n");
+        if (liveEnv.hInFifo == NULL || liveEnv.hOutFifo == NULL) {
+            ERR("Failed to open live stream fifos\n");
             cleanup(EXIT_FAILURE);
         }
 
@@ -457,8 +457,8 @@ Int main(Int argc, Char *argv[])
         videoEnv.hPauseProcess      = hPauseProcess;
         videoEnv.hCaptureOutFifo    = captureEnv.hOutFifo;
         videoEnv.hCaptureInFifo     = captureEnv.hInFifo;
-        videoEnv.hWriterOutFifo     = writerEnv.hOutFifo;
-        videoEnv.hWriterInFifo      = writerEnv.hInFifo;
+        videoEnv.hWriterOutFifo     = liveEnv.hOutFifo;
+        videoEnv.hWriterInFifo      = liveEnv.hInFifo;
         videoEnv.videoEncoder       = args.videoEncoder->codecName;
         videoEnv.params             = args.videoEncoder->params;
         videoEnv.dynParams          = args.videoEncoder->dynParams;
@@ -487,19 +487,19 @@ Int main(Int argc, Char *argv[])
         Rendezvous_meet(hRendezvousWriter);
 
         /* Create the writer thread */
-        writerEnv.hRendezvousInit    = hRendezvousInit;
-        writerEnv.hRendezvousCleanup = hRendezvousCleanup;
-        writerEnv.hPauseProcess      = hPauseProcess;
-        writerEnv.videoFile          = args.videoFile;
-        writerEnv.outBufSize         = videoEnv.outBufSize;
-        writerEnv.writeDisabled      = args.writeDisabled;
+        liveEnv.hRendezvousInit    = hRendezvousInit;
+        liveEnv.hRendezvousCleanup = hRendezvousCleanup;
+        liveEnv.hPauseProcess      = hPauseProcess;
+        liveEnv.videoFile          = args.videoFile;
+        liveEnv.outBufSize         = videoEnv.outBufSize;
+        liveEnv.streamDisabled      = args.writeDisabled;
 
-        if (pthread_create(&writerThread, NULL, writerThrFxn, &writerEnv)) {
-            ERR("Failed to create writer thread\n");
+        if (pthread_create(&liveThread, NULL, livestrmThrFxn, &liveEnv)) {
+            ERR("Failed to create live thread\n");
             cleanup(EXIT_FAILURE);
         }
 
-        initMask |= WRITERTHREADCREATED;
+        initMask |= LIVETHREADCREATED;
 
     }
 
@@ -546,20 +546,20 @@ cleanup:
         }
     }
 
-    if (initMask & WRITERTHREADCREATED) {
-        if (pthread_join(writerThread, &ret) == 0) {
+    if (initMask & LIVETHREADCREATED) {
+        if (pthread_join(liveThread, &ret) == 0) {
             if (ret == THREAD_FAILURE) {
                 status = EXIT_FAILURE;
             }
         }
     }
 
-    if (writerEnv.hOutFifo) {
-        Fifo_delete(writerEnv.hOutFifo);
+    if (liveEnv.hOutFifo) {
+        Fifo_delete(liveEnv.hOutFifo);
     }
 
-    if (writerEnv.hInFifo) {
-        Fifo_delete(writerEnv.hInFifo);
+    if (liveEnv.hInFifo) {
+        Fifo_delete(liveEnv.hInFifo);
     }
 
     if (initMask & CAPTURETHREADCREATED) {

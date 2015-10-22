@@ -34,7 +34,7 @@
 #
 
 -include ../../Rules.make 
-SUBDIRS = decode encode encodedecode
+SUBDIRS = decode encode encodedecode camstreamer
 
 CLEANSUBDIRS = $(addsuffix .clean, $(SUBDIRS))
 INSTALLSUBDIRS = $(addsuffix .install, $(SUBDIRS))
@@ -45,9 +45,9 @@ else
 	MAKE := $(MAKE) --no-print-directory
 endif
 
-.PHONY: install clean $(SUBDIRS) $(INSTALLSUBDIRS) $(CLEANSUBDIRS) decode encode encodedecode
+.PHONY: install clean $(SUBDIRS) $(INSTALLSUBDIRS) $(CLEANSUBDIRS) decode encode encodedecode camstreamer
 
-all:	decode encode encodedecode
+all:	decode encode encodedecode camstreamer
 
 decode:
 	@echo
@@ -59,6 +59,11 @@ encode:
 	@echo Making all in subdirectory $@...
 	@$(MAKE) -C encode
 
+camstreamer:
+	@echo
+	@echo Making all in subdirectory $@...
+	@$(MAKE) -C camstreamer
+	
 encodedecode:
 	@echo
 	@echo Making all in subdirectory $@...

@@ -1,48 +1,43 @@
 /*
- * livestrm.c
- *
- *  Created on: Oct 21, 2015
- *      Author: gvigelet
+ * writer.c
  *
  * This source file has the implementations for the writer thread
  * functions implemented for 'DVSDK encode demo' on DM365 platform
  *
- * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
- *
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
+ * 
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions 
  *  are met:
  *
- *    Redistributions of source code must retain the above copyright
+ *    Redistributions of source code must retain the above copyright 
  *    notice, this list of conditions and the following disclaimer.
  *
  *    Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the
+ *    notice, this list of conditions and the following disclaimer in the 
+ *    documentation and/or other materials provided with the   
  *    distribution.
  *
  *    Neither the name of Texas Instruments Incorporated nor the names of
  *    its contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <stdio.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+
 #include <xdc/std.h>
 
 #include <ti/sdo/dmai/Fifo.h>
@@ -50,7 +45,7 @@
 #include <ti/sdo/dmai/BufferGfx.h>
 #include <ti/sdo/dmai/Rendezvous.h>
 
-#include "livestrm.h"
+#include "writer.h"
 #include "../demo.h"
 
 /* Number of buffers in writer pipe */
@@ -59,9 +54,9 @@
 /******************************************************************************
  * writerThrFxn
  ******************************************************************************/
-Void *livestrmThrFxn(Void *arg)
+Void *writerThrFxn(Void *arg)
 {
-    LiveEnv          *envp            = (LiveEnv *) arg;
+    WriterEnv          *envp            = (WriterEnv *) arg;
     Void               *status          = THREAD_SUCCESS;
     FILE               *outFile         = NULL;
     Buffer_Attrs        bAttrs          = Buffer_Attrs_DEFAULT;
@@ -70,14 +65,7 @@ Void *livestrmThrFxn(Void *arg)
     Int                 fifoRet;
     Int                 bufIdx;
 
-    int ret = 0;
-    // create named pipe
-    ret = mkfifo(envp->videoFile, 0666);
-    if(ret != 0 && ret != EEXIST){
-    	printf("Error creating named pipe file\n");
-    }
-
-    /* Open the output video pipe */
+    /* Open the output video file */
     outFile = fopen(envp->videoFile, "w");
 
     if (outFile == NULL) {
@@ -121,7 +109,7 @@ Void *livestrmThrFxn(Void *arg)
             cleanup(THREAD_SUCCESS);
         }
 
-        if (!envp->streamDisabled) {
+        if (!envp->writeDisabled) {
             /* Store the encoded frame to disk */
             if (Buffer_getNumBytesUsed(hOutBuf)) {
                 if (fwrite(Buffer_getUserPtr(hOutBuf),
@@ -134,6 +122,9 @@ Void *livestrmThrFxn(Void *arg)
                 printf("Warning, writer received 0 byte encoded frame\n");
             }
         }
+
+        /* call live555 and pass the frame buffer to it */
+        /* Live_passFrame(Buffer_getUserPtr(hOutBuf), Buffer_getNumBytesUsed(hOutBuf)); */
 
         /* Return buffer to capture thread */
         if (Fifo_put(envp->hOutFifo, hOutBuf) < 0) {
@@ -154,8 +145,6 @@ cleanup:
     /* Clean up the thread before exiting */
     if (outFile) {
         fclose(outFile);
-        // unlink pipe
-        unlink(outFile);
     }
 
     if (hBufTab) {
@@ -164,5 +153,3 @@ cleanup:
 
     return status;
 }
-
-

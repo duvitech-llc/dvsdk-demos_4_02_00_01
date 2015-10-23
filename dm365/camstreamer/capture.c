@@ -197,7 +197,7 @@ Void *captureThrFxn(Void *arg)
     videoStd = envp->videoStd;
 
     /* We only support D1, 720P and 1080P input */
-    if (videoStd != VideoStd_D1_NTSC && videoStd != VideoStd_D1_PAL 
+    if (videoStd != VideoStd_D1_NTSC && videoStd != VideoStd_D1_PAL
         && videoStd != VideoStd_720P_60 && videoStd != VideoStd_720P_50 &&
         videoStd != VideoStd_1080I_30) {
         ERR("Need D1/720P/1080P input to this demo\n");

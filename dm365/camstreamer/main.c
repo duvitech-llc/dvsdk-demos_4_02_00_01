@@ -109,9 +109,15 @@ typedef struct Args {
 
 #define DEFAULT_ARGS \
     { VideoStd_D1_NTSC, "D1 NTSC", Capture_Input_CAMERA, \
-      "test.264", NULL, 0, 0, -1, NULL, 16000, NULL, \
+      "/tmp/l3cam.264", NULL, 0, 0, -1, NULL, 16000, NULL, \
 	  FALSE, FOREVER, FALSE, FALSE, FALSE }
 
+/*
+#define DEFAULT_ARGS \
+    { VideoStd_SQUARE_NTSC, "VGA", Capture_Input_COMPOSITE, \
+      "/tmp/l3cam.264", NULL, 0, 0, -1, NULL, 16000, NULL, \
+	  FALSE, FOREVER, FALSE, TRUE, FALSE }
+*/
 /* Global variable declarations for this application */
 GlobalData gbl = GBL_DATA_INIT;
 
@@ -306,6 +312,7 @@ Int main(Int argc, Char *argv[])
 
     /* Parse the arguments given to the app and set the app environment */
     args.videoEncoder = getCodec(".264", engine->videoEncoders);
+    //args.videoEncoder = getCodec(".mpeg4", engine->videoEncoders);
 
     printf("Encode demo started.\n");
 

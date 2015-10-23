@@ -77,23 +77,7 @@ CXX_FLAGS += -Wall -g
 C_FLAGS += -D_GNU_SOURCE
 LD_FLAGS += -L$(LINUXLIBS_INSTALL_DIR)/lib -lpthread -lasound
 
-# Live555 stuff
-C_FLAGS += -I${LIVE}/BasicUsageEnvironment/include \
-	   -I${LIVE}/UsageEnvironment/include \
-	   -I${LIVE}/groupsock/include \
-	   -I${LIVE}/liveMedia/include
 
-CXX_FLAGS += -I${LIVE}/BasicUsageEnvironment/include \
-	   -I${LIVE}/UsageEnvironment/include \
-	   -I${LIVE}/groupsock/include \
-	   -I${LIVE}/liveMedia/include
-
-LD_FLAGS += -L/home/gvigelet/staging/usr/local/lib \
-	    -lBasicUsageEnvironment \
-	    -lUsageEnvironment \
-	    -lgroupsock \
-	    -lliveMedia \
-	    -lstdc++
 
 
 COMPILE.c   = $(VERBOSE) $(CSTOOL_PREFIX)gcc $(CPP_FLAGS) $(C_FLAGS) $(CPP_FLAGS) -c

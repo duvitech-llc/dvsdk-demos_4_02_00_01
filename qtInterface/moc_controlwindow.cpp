@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'controlwindow.h'
 **
-** Created: Thu Oct 22 01:44:43 2015
+** Created: Thu Oct 22 21:20:56 2015
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.6.3)
 **
 ** WARNING! All changes made in this file will be lost!
